@@ -18,8 +18,8 @@ const ProjectType = new GraphQLObjectType({
         return Client.findById(parent.clientId)
       }
     }
-  })
-})
+  }),
+});
 
 // Client type
 const ClientType = new GraphQLObjectType({
@@ -29,8 +29,8 @@ const ClientType = new GraphQLObjectType({
     name: { type: GraphQLString },
     email: { type: GraphQLString },
     phone: { type: GraphQLString}
-  })
-})
+  }),
+});
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',
@@ -39,30 +39,30 @@ const RootQuery = new GraphQLObjectType({
     type: new GraphQLList(ProjectType),
     resolve(parent, args){
       return Project.find();
-    }
+    },
   },
   project: {
     type: ProjectType,
     args: { id: { type: GraphQLID } },
     resolve(parent, args){
       return Project.findById(args.id);
-    }
+    },
   },
     clients: {
       type: new GraphQLList(ClientType),
       resolve(parent, args){
         return Client.find();
-      }
+      },
     },
     client: {
       type: ClientType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args){
         return Client.findById(args.id)
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
 
 //Mutations
 const mutation = new GraphQLObjectType({
@@ -104,11 +104,23 @@ const mutation = new GraphQLObjectType({
         status: {type: new GraphQLEnumType({
           name: 'ProjectStatus',
           values: {
-            'new': { value: 'Not Started'},
-            'progress': { value: 'In Progress'},
-            'completed': { value: 'Completed'},
+            new: { value: 'Not Started'},
+            progress: { value: 'In Progress'},
+            completed: { value: 'Completed'},
           }
-        }) },
+        }),
+        defaultValue: 'Not Started',
+       },
+       clientId: { type: GraphQLNonNull(GraphQLID)},
+      },
+      resolve(parent, args){
+        const project = new Project({
+          name: args.name,
+          description: args.description,
+          status: args.status,
+          clientId: args.clientId,
+        });
+        return project.save();
       }
     }
   }
