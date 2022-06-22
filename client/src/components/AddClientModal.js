@@ -11,14 +11,28 @@ export default function AddClientModal() {
 
   const [addClient] = useMutation(ADD_CLIENT, {
     variables: { name, email, phone},
-    refetchQueries: [{ query: ADD_CLIENT }]
-  })
+    update(cache,  {data: { addClient }}){
+      const { clients } = cache.readQuery({ query:
+        GET_CLIENTS });
+
+        cache.writeQuery({
+          query: GET_CLIENTS,
+          data: { clients: [...clients, addClient]},
+        });
+    },
+  });
 
   const onSubmit = (e) => {
     e.preventDefault();
     if(name === '' || email === '' || phone === ''){
       return alert('Please fill in all fields')
     }
+
+    addClient(name, email, phone);
+
+    setName('');
+    setEmail('');
+    setPhone('');
   }
 
   return (
