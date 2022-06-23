@@ -14,3 +14,5 @@ const ADD_PROJECT = gql`
     }
   }
 `
+
+export { ADD_PROJECT}
