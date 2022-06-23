@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FaList } from 'react-icons/fa'
 import { useMutation, useQuery } from '@apollo/client'
 import { GET_PROJECTS } from '../queries/projectQueries';
+import { GET_CLIENTS } from '../queries/clientQueries';
 
 export default function AddClientModal() {
   const [name, setName] = useState('');
@@ -9,22 +10,29 @@ export default function AddClientModal() {
   const [ClientId, setClientId] = useState('');
   const [status, setStatus] = useState('new');
 
+  //Get Clients for select
+  const {loading, error, data } = useQuery(GET_CLIENTS);
 
   const onSubmit = (e) => {
     e.preventDefault();
     if(name === '' || description === '' || status === ''){
       return alert('Please fill in all fields')
     }
-    
+
     setName('');
     setDescription('');
     setStatus('new');
     setClientId('');
   }
 
+  if(loading) return null;
+  if(error) return `Something went wrong`
+
   return (
     <>
-    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
+    {!loading && ! error && (
+      <>
+      <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
   <div className="d-flex align-items-center">
     <FaList className="icon" />
     <div>New Proejct</div>
@@ -52,11 +60,21 @@ export default function AddClientModal() {
             <label className='form-label'>Status</label>
               <select id="status" className="form-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                 <option value="new">Not Started</option>
-                <option value="new">In Progress</option>
-                <option value="new">Completed</option>
+                <option value="progress">In Progress</option>
+                <option value="completed">Completed</option>
               </select>
           </div>
-
+          <div className="mb-3">
+            <label className="form-label">Client</label>
+            <select id="clientId" className="form-select" value={ClientId} onChange={(e) => setClientId(e.target.value)}>
+              <option value="">Select Client</option>
+              {data.clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <button type='submit' data-bs-dismiss="modal" className='btn btn-primary'>Submit</button>
         </form>
       </div>
@@ -64,6 +82,9 @@ export default function AddClientModal() {
     </div>
   </div>
 </div>
+      </>
+    )}
+    
     </>
   )
 }
