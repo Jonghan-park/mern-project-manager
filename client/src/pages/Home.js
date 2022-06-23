@@ -1,4 +1,7 @@
 import React from 'react'
+import Clients from '../components/Clients'
+import Projects from '../components/Projects'
+import AddClientModal from '../components/AddClientModal'
 
 export default function Home() {
   return (
@@ -7,6 +10,7 @@ export default function Home() {
       <AddClientModal />
     </div>
       <Projects />
+      <hr />
       <Clients />
     </>
   )
