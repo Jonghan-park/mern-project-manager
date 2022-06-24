@@ -19,6 +19,7 @@ export default function EditProjectForm({project}) {
     if(!name || !description || !status){
       return alert('Please fill out all fields')
     }
+    updateProject(name, description, status)
   }
 
   return (

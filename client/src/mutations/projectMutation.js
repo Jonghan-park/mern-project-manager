@@ -5,7 +5,7 @@ const ADD_PROJECT = gql`
     $name: String!
     $description: String!
     $status: ProjectStatus!
-    $clientId: clientId!
+    $clientId: ID!
   ) {
     addProject(
       name: $name
