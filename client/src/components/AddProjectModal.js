@@ -5,14 +5,21 @@ import { GET_PROJECTS } from '../queries/projectQueries';
 import { GET_CLIENTS } from '../queries/clientQueries';
 import { ADD_PROJECT } from '../mutations/projectMutation';
 
-export default function AddClientModal() {
+export default function AddProjectModal() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [ClientId, setClientId] = useState('');
+  const [clientId, setClientId] = useState('');
   const [status, setStatus] = useState('new');
 
   const [addProject] = useMutation(ADD_PROJECT, {
     variables: { name, description, clientId, status },
+    update(cache, { data: { addProject }}) {
+      const { projects } = cache.readQuery({query: GET_PROJECTS});
+      cache.writeQuery({
+        query: GET_PROJECTS,
+        data: { projects: [...projects, addProject]},
+      })
+    }
   });
 
   //Get Clients for select
@@ -24,6 +31,8 @@ export default function AddClientModal() {
       return alert('Please fill in all fields')
     }
 
+    addProject(name, description, clientId, status);
+
     setName('');
     setDescription('');
     setStatus('new');
@@ -31,11 +40,11 @@ export default function AddClientModal() {
   }
 
   if(loading) return null;
-  if(error) return `Something went wrong`
+  if(error) return `Something went wrong`;
 
   return (
     <>
-    {!loading && ! error && (
+    {!loading && !error && (
       <>
       <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProjectModal">
   <div className="d-flex align-items-center">
@@ -71,7 +80,7 @@ export default function AddClientModal() {
           </div>
           <div className="mb-3">
             <label className="form-label">Client</label>
-            <select id="clientId" className="form-select" value={ClientId} onChange={(e) => setClientId(e.target.value)}>
+            <select id="clientId" className="form-select" value={clientId} onChange={(e) => setClientId(e.target.value)}>
               <option value="">Select Client</option>
               {data.clients.map((client) => (
                 <option key={client.id} value={client.id}>
