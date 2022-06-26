@@ -7,7 +7,7 @@ import Project from './pages/Project'
 import NotFound from './pages/NotFound'
 
 const client = new ApolloClient({
-  uri: 'https://project-manager-jonghan.netlify.app/graphql',
+  uri: 'http://localhost:5000/graphql',
   cache: new InMemoryCache(), 
 })
 
