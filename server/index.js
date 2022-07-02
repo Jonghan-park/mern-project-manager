@@ -30,6 +30,6 @@ app.use('/graphql', graphqlHTTP({
 
 
 
-
+console.log(__dirname);
 
 app.listen(port, console.log(`Server running on port ${port}`));
